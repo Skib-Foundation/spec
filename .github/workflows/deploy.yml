@@ -1,0 +1,38 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [master]
+    tags: ['**']
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: typst-community/setup-typst@v4
+
+      - name: Build HTML
+        run: typst c index.typ --format html --features html
+
+      - name: Deploy
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          ssh_dir=$(mktemp -d)
+          trap 'rm -rf "$ssh_dir"' EXIT
+          printf '%s\n' "$DEPLOY_SSH_KEY" > "$ssh_dir/key"
+          chmod 600 "$ssh_dir/key"
+          printf '%s\n' 'skib.foundation ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPfvieXBaUU9lydZ0ZB3KF1XryJ4Au1+ZWJNIjPT002u' > "$ssh_dir/known_hosts"
+          scp -i "$ssh_dir/key" \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$ssh_dir/known_hosts" \
+            index.html style.css root@skib.foundation:/var/www/html/
