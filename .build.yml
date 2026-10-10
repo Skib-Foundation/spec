@@ -1,0 +1,25 @@
+submitter:
+  git.sr.ht:
+    enabled: true
+    allow-refs:
+      - refs/heads/master
+      - "refs/tags/*"
+
+image: nixos/latest
+packages:
+  - nixos.typst
+  - nixos.openssh
+sources:
+  - https://git.sr.ht/~iliayar/spec
+secrets:
+  - 6a725f52-66ab-408d-9191-2ba3966c3df7
+tasks:
+  - build: |
+      cd spec
+      typst c index.typ --format html --features html
+  - deploy: |
+      echo "skib.foundation ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPfvieXBaUU9lydZ0ZB3KF1XryJ4Au1+ZWJNIjPT002u" >> ~/.ssh/known_hosts
+
+      cd spec
+      scp index.html root@skib.foundation:/var/www/html/index.html
+      scp style.css root@skib.foundation:/var/www/html/style.css
