@@ -10,7 +10,7 @@ packages:
   - nixos.typst
   - nixos.openssh
 sources:
-  - https://git.sr.ht/~iliayar/spec
+  - https://git.sr.ht/~skib/spec
 secrets:
   - 6a725f52-66ab-408d-9191-2ba3966c3df7
 tasks:
