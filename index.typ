@@ -11,5 +11,9 @@
 }
 
 #title("Skib")
-#include "main.typ"
+#include "src/introduction.typ"
+#include "src/types.typ"
+#include "src/functions.typ"
+#include "src/memory.typ"
+#include "src/macros.typ"
 ...
