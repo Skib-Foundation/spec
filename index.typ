@@ -11,5 +11,5 @@
 }
 
 #title("Skib")
-
+#include "main.typ"
 ...
